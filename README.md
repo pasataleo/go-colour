@@ -1,40 +1,92 @@
-# go-template
+# go-colour
 
-A template repository for Go projects. Requires macOS or Linux.
+A Go library for adding ANSI colour codes to strings using inline placeholders.
 
-## Setup
-
-After creating a new repository from this template, run:
+## Installation
 
 ```sh
-./setup.sh
+go get github.com/pasataleo/go-colour
 ```
 
-This will:
+## Usage
 
-- Update the Go module path to match your repository name
-- Configure the project as an executable or library
-- Install a git pre-commit hook that runs `make all`
-- Set up the release workflow for the chosen project type
-- Delete itself
+```go
+package main
 
-## Make targets
+import (
+	"fmt"
 
-- `make all` — run tidy, generate, fmt, lint, test, and build
-- `make tidy` — run `go mod tidy`
-- `make generate` — run `go generate ./...`
-- `make fmt` — run `go fmt ./...`
-- `make lint` — install and run golangci-lint
-- `make test` — run `go test ./...`
-- `make build` — build the binary (or verify compilation for libraries); local builds report version `dev`
+	"github.com/pasataleo/go-colour/pkg/colour"
+)
 
-## Releasing
-
-Update `CHANGELOG.md` with the changes for the release, then tag the commit:
-
-```sh
-git tag v0.1.0
-git push origin v0.1.0
+func main() {
+	c := colour.New()
+	fmt.Println(c.Colour("{red}error:{reset} something went wrong"))
+}
 ```
 
-The release workflow will create a GitHub release using the contents of `CHANGELOG.md` and clear it ready for the next release.
+### Format strings
+
+`Colourf` applies colour placeholders to the format string before passing arguments through `fmt.Sprintf`. Arguments are not processed for colour placeholders.
+
+```go
+c := colour.New()
+fmt.Println(c.Colourf("{red}error: %s{reset}", "disk full"))
+```
+
+### RGB colours
+
+Use `{rgb:R,G,B}` and `{bg-rgb:R,G,B}` for 24-bit foreground and background colours:
+
+```go
+c := colour.New()
+fmt.Println(c.Colour("{rgb:255,100,0}orange text{reset}"))
+fmt.Println(c.Colour("{bg-rgb:0,0,128}navy background{reset}"))
+```
+
+### Custom placeholders
+
+Register custom placeholders with `WithColour` or `WithColours`:
+
+```go
+c := colour.New(
+	colour.WithColour("{highlight}", colour.Yellow+colour.Bold),
+	colour.WithColours(map[string]string{
+		"{error}":   colour.Red,
+		"{success}": colour.Green,
+	}),
+)
+fmt.Println(c.Colour("{error}failed{reset} / {success}passed{reset}"))
+```
+
+### TTY detection
+
+Colours are automatically disabled when stdout is not a terminal. Use `Enable` or `Disable` to override:
+
+```go
+c := colour.New(colour.Enable())  // force colours on
+c := colour.New(colour.Disable()) // force colours off
+```
+
+## Built-in placeholders
+
+### Styles
+
+`{reset}`, `{bold}`, `{italic}`, `{underline}`, `{strikethrough}`
+
+### Foreground colours
+
+`{black}`, `{red}`, `{green}`, `{yellow}`, `{blue}`, `{magenta}`, `{cyan}`, `{white}`, `{default}`
+
+### Bright foreground colours
+
+`{grey}`, `{bright-red}`, `{bright-green}`, `{bright-yellow}`, `{bright-blue}`, `{bright-magenta}`, `{bright-cyan}`, `{bright-white}`
+
+### Background colours
+
+`{bg-black}`, `{bg-red}`, `{bg-green}`, `{bg-yellow}`, `{bg-blue}`, `{bg-magenta}`, `{bg-cyan}`, `{bg-white}`, `{bg-default}`
+
+### Bright background colours
+
+`{bg-grey}`, `{bg-bright-red}`, `{bg-bright-green}`, `{bg-bright-yellow}`, `{bg-bright-blue}`, `{bg-bright-magenta}`, `{bg-bright-cyan}`, `{bg-bright-white}`
+
