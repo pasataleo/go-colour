@@ -154,23 +154,16 @@ func Disable() Opt {
 }
 
 func New(opts ...Opt) Colour {
+	_, noColor := os.LookupEnv("NO_COLOR")
 	colour := Colour{
 		Colours: make(map[string]string),
-		Disable: !isTerminal(os.Stdout),
+		Disable: noColor,
 	}
 	maps.Copy(colour.Colours, defaultColours)
 	for _, opt := range opts {
 		colour = opt(colour)
 	}
 	return colour
-}
-
-func isTerminal(f *os.File) bool {
-	fi, err := f.Stat()
-	if err != nil {
-		return false
-	}
-	return fi.Mode()&(os.ModeDevice|os.ModeCharDevice) == os.ModeDevice|os.ModeCharDevice
 }
 
 func (c Colour) Colour(input string) string {

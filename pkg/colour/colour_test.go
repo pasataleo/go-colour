@@ -6,7 +6,7 @@ import (
 )
 
 func TestColour_NamedColours(t *testing.T) {
-	c := New(Enable())
+	c := New()
 	got := c.Colour("{red}error{reset}")
 	want := Red + "error" + Reset
 	if got != want {
@@ -15,7 +15,7 @@ func TestColour_NamedColours(t *testing.T) {
 }
 
 func TestColour_AllDefaults(t *testing.T) {
-	c := New(Enable())
+	c := New()
 	for placeholder, code := range defaultColours {
 		got := c.Colour(placeholder)
 		if got != code {
@@ -25,7 +25,7 @@ func TestColour_AllDefaults(t *testing.T) {
 }
 
 func TestColour_NoPlaceholders(t *testing.T) {
-	c := New(Enable())
+	c := New()
 	got := c.Colour("plain text")
 	if got != "plain text" {
 		t.Errorf("got %q, want %q", got, "plain text")
@@ -33,7 +33,7 @@ func TestColour_NoPlaceholders(t *testing.T) {
 }
 
 func TestColour_MultiplePlaceholders(t *testing.T) {
-	c := New(Enable())
+	c := New()
 	got := c.Colour("{bold}{red}error:{reset} something broke")
 	want := Bold + Red + "error:" + Reset + " something broke"
 	if got != want {
@@ -42,7 +42,7 @@ func TestColour_MultiplePlaceholders(t *testing.T) {
 }
 
 func TestColour_RGB(t *testing.T) {
-	c := New(Enable())
+	c := New()
 	got := c.Colour("{rgb:255,100,0}orange{reset}")
 	want := "\033[38;2;255;100;0m" + "orange" + Reset
 	if got != want {
@@ -51,7 +51,7 @@ func TestColour_RGB(t *testing.T) {
 }
 
 func TestColour_MultipleRGB(t *testing.T) {
-	c := New(Enable())
+	c := New()
 	got := c.Colour("{rgb:255,0,0}red{rgb:0,255,0}green{reset}")
 	want := "\033[38;2;255;0;0m" + "red" + "\033[38;2;0;255;0m" + "green" + Reset
 	if got != want {
@@ -60,7 +60,7 @@ func TestColour_MultipleRGB(t *testing.T) {
 }
 
 func TestColour_RGBZeroValues(t *testing.T) {
-	c := New(Enable())
+	c := New()
 	got := c.Colour("{rgb:0,0,0}black{reset}")
 	want := "\033[38;2;0;0;0m" + "black" + Reset
 	if got != want {
@@ -101,7 +101,7 @@ func TestRGB(t *testing.T) {
 }
 
 func TestWithColour_Custom(t *testing.T) {
-	c := New(Enable(), WithColour("{highlight}", Yellow+Bold))
+	c := New(WithColour("{highlight}", Yellow+Bold))
 	got := c.Colour("{highlight}text{reset}")
 	want := Yellow + Bold + "text" + Reset
 	if got != want {
@@ -110,7 +110,7 @@ func TestWithColour_Custom(t *testing.T) {
 }
 
 func TestWithColours_Custom(t *testing.T) {
-	c := New(Enable(), WithColours(map[string]string{
+	c := New(WithColours(map[string]string{
 		"{error}":   Red,
 		"{success}": Green,
 	}))
@@ -122,7 +122,7 @@ func TestWithColours_Custom(t *testing.T) {
 }
 
 func TestWithColour_OverridesDefault(t *testing.T) {
-	c := New(Enable(), WithColour("{red}", Blue))
+	c := New(WithColour("{red}", Blue))
 	got := c.Colour("{red}actually blue{reset}")
 	want := Blue + "actually blue" + Reset
 	if got != want {
@@ -131,7 +131,7 @@ func TestWithColour_OverridesDefault(t *testing.T) {
 }
 
 func TestColourf(t *testing.T) {
-	c := New(Enable())
+	c := New()
 	got := c.Colourf("{red}error: %s{reset}", "something broke")
 	want := Red + "error: something broke" + Reset
 	if got != want {
@@ -140,7 +140,7 @@ func TestColourf(t *testing.T) {
 }
 
 func TestColourf_DoesNotColourArgs(t *testing.T) {
-	c := New(Enable())
+	c := New()
 	got := c.Colourf("prefix %s suffix", "{red}not coloured{reset}")
 	want := "prefix {red}not coloured{reset} suffix"
 	if got != want {
@@ -158,7 +158,7 @@ func TestColourf_Disabled(t *testing.T) {
 }
 
 func TestColour_InvalidRGBPanics(t *testing.T) {
-	c := New(Enable())
+	c := New()
 	defer func() {
 		if r := recover(); r == nil {
 			t.Error("expected panic but did not get one")
@@ -168,7 +168,7 @@ func TestColour_InvalidRGBPanics(t *testing.T) {
 }
 
 func TestColour_InvalidBgRGBPanics(t *testing.T) {
-	c := New(Enable())
+	c := New()
 	defer func() {
 		if r := recover(); r == nil {
 			t.Error("expected panic but did not get one")
@@ -178,7 +178,7 @@ func TestColour_InvalidBgRGBPanics(t *testing.T) {
 }
 
 func TestNew_DefaultsPresent(t *testing.T) {
-	c := New(Enable())
+	c := New()
 	colours := c.Colours
 	for placeholder := range defaultColours {
 		if !slices.Contains(mapKeys(colours), placeholder) {

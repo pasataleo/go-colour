@@ -59,9 +59,9 @@ c := colour.New(
 fmt.Println(c.Colour("{error}failed{reset} / {success}passed{reset}"))
 ```
 
-### TTY detection
+### Disabling colours
 
-Colours are automatically disabled when stdout is not a terminal. Use `Enable` or `Disable` to override:
+Colours are automatically disabled when the `NO_COLOR` environment variable is set (see [no-color.org](https://no-color.org)). Use `Enable` or `Disable` to override programmatically:
 
 ```go
 c := colour.New(colour.Enable())  // force colours on

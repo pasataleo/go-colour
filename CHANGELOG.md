@@ -7,7 +7,7 @@
 - `RGB` and `BgRGB` functions for 24-bit foreground and background colours
 - `{rgb:R,G,B}` and `{bg-rgb:R,G,B}` placeholder support in format strings
 - `WithColour` and `WithColours` options for registering custom placeholders
-- Automatic TTY detection — colours are disabled by default when stdout is not a terminal
-- `Enable` option to force colours on regardless of TTY
-- `Disable` option to force colours off regardless of TTY
+- `NO_COLOR` environment variable support — colours are automatically disabled when set (see [no-color.org](https://no-color.org))
+- `Enable` option to force colours on regardless of `NO_COLOR`
+- `Disable` option to force colours off regardless of `NO_COLOR`
 - `Colourf` for applying placeholders to format strings before `fmt.Sprintf`
